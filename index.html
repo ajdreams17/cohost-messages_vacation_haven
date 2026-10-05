@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Co-Host">
+<meta name="theme-color" content="#0F6E5D">
+<title>Co-Host Messages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --ground:#F3F5F4; --surface:#FFFFFF; --ink:#14211D; --muted:#4F5E58; --line:#DCE3E0; --field:#C9D3CF;
+  --accent:#0F6E5D; --on-accent:#FFFFFF; --soft:#E3EEEA; --warn-bg:#FCEBD7; --warn:#7A3F06; --done:#14211D; --on-done:#FFFFFF;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0F1714; --surface:#18221F; --ink:#E8EFEC; --muted:#A3B3AD; --line:#2A3833; --field:#3A4A44;
+    --accent:#3FB59C; --on-accent:#08201A; --soft:#1F3330; --warn-bg:#3A2A17; --warn:#F5C38A; --done:#E8EFEC; --on-done:#0F1714;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0F1714; --surface:#18221F; --ink:#E8EFEC; --muted:#A3B3AD; --line:#2A3833; --field:#3A4A44;
+  --accent:#3FB59C; --on-accent:#08201A; --soft:#1F3330; --warn-bg:#3A2A17; --warn:#F5C38A; --done:#E8EFEC; --on-done:#0F1714;
+  color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px); height:100%; background:var(--ground)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0; height:100%; background:var(--ground); color:var(--ink);
+  font-family:'Figtree','Helvetica Neue',Helvetica,system-ui,sans-serif; font-size:16px; -webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit; color:inherit}
+:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+.app{height:100%; max-width:520px; margin:0 auto; display:flex; flex-direction:column; background:var(--ground)}
+.view{flex:1; min-height:0; display:flex; flex-direction:column}
+.view[hidden]{display:none}
+.scroll{flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch}
+.bar{background:var(--surface); border-top:1px solid var(--line); padding:12px 20px 16px; display:flex; flex-direction:column; gap:8px}
+
+/* home */
+.home-head{padding:24px 20px 14px; display:flex; flex-direction:column; gap:14px}
+.home-top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px}
+.kicker{font-size:14px; font-weight:600; color:var(--muted)}
+h1{margin:4px 0 0; font-size:30px; line-height:1.12; font-weight:800; letter-spacing:-0.01em}
+.chips{display:flex; gap:8px; flex-wrap:wrap}
+.chip{padding:7px 12px; border-radius:999px; background:var(--surface); border:1px solid var(--line); font-size:14px; font-weight:600}
+.search{display:flex; align-items:center; gap:10px; height:52px; padding:0 14px; border-radius:14px; background:var(--surface); border:1px solid var(--field)}
+.search input{flex:1; min-width:0; border:0; outline:none; background:transparent; font-size:17px}
+.list{padding:0 20px 20px; display:flex; flex-direction:column; gap:10px}
+.list-label{font-size:14px; font-weight:600; color:var(--muted)}
+.prop{display:flex; align-items:center; gap:14px; width:100%; min-height:72px; padding:12px 14px; border:1px solid var(--line); border-radius:16px; background:var(--surface); text-align:left; cursor:pointer}
+.prop:active{transform:scale(.99)}
+.num{flex:none; width:40px; height:40px; border-radius:12px; background:var(--soft); color:var(--accent); display:flex; align-items:center; justify-content:center; font-weight:800}
+.prop-text{flex:1; min-width:0; display:flex; flex-direction:column; gap:3px}
+.prop-name{font-size:16px; font-weight:700; line-height:1.25}
+.prop-meta{font-size:14px; color:var(--muted)}
+.tag{align-self:flex-start; margin-top:3px; padding:3px 8px; border-radius:6px; background:var(--warn-bg); color:var(--warn); font-size:12px; font-weight:700}
+.empty{padding:24px 4px; color:var(--muted); line-height:1.5}
+.icon-btn{flex:none; width:44px; height:44px; border:0; border-radius:12px; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink)}
+.icon-btn.boxed{background:var(--surface); border:1px solid var(--line)}
+.outline-btn{display:flex; align-items:center; justify-content:center; gap:10px; height:52px; border-radius:14px; border:1.5px solid var(--ink); background:transparent; color:var(--ink); text-decoration:none; font-size:16px; font-weight:700; cursor:pointer; width:100%}
+
+/* detail */
+.top{padding:10px 12px; display:flex; align-items:center; gap:6px; background:var(--surface); border-bottom:1px solid var(--line)}
+.top-text{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px}
+.top-name{font-size:18px; font-weight:800; line-height:1.2}
+.top-meta{font-size:14px; color:var(--muted)}
+.body{padding:18px 20px 24px; display:flex; flex-direction:column; gap:24px}
+.step{display:flex; flex-direction:column; gap:10px}
+.step-title{font-size:15px; font-weight:700}
+.step-title b{color:var(--accent); margin-right:6px}
+.tabs{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
+.tab{min-height:68px; padding:10px 6px; border-radius:14px; border:2px solid var(--line); background:var(--surface); cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px}
+.tab span:first-child{font-size:16px; font-weight:800}
+.tab span:last-child{font-size:12px; font-weight:500; color:var(--muted)}
+.tab[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--on-accent)}
+.tab[aria-pressed="true"] span:last-child{color:var(--on-accent)}
+label.field-label{font-size:14px; font-weight:600; color:var(--muted)}
+.field{height:52px; padding:0 14px; border-radius:14px; border:1px solid var(--field); background:var(--surface); font-size:17px; width:100%}
+.field:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--soft)}
+.warn{padding:10px 12px; border-radius:12px; background:var(--warn-bg); color:var(--warn); font-size:14px; font-weight:600; line-height:1.4}
+.bubble{padding:16px; border-radius:16px 16px 16px 4px; background:var(--surface); border:1px solid var(--line); font-size:15px; line-height:1.55; white-space:pre-wrap; overflow-wrap:anywhere}
+.bubble mark{background:var(--warn-bg); color:var(--warn); border-radius:4px; padding:0 3px; font-weight:600}
+.preview-head{display:flex; justify-content:space-between; align-items:center; gap:8px}
+.link-btn{border:0; background:transparent; color:var(--accent); font-weight:700; font-size:15px; padding:10px 4px; min-height:44px; cursor:pointer}
+textarea.editor{width:100%; min-height:260px; padding:14px; border-radius:14px; border:1px solid var(--field); background:var(--surface); font-size:15px; line-height:1.5; resize:vertical}
+textarea.editor:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--soft)}
+.row{display:flex; gap:8px}
+.row > *{flex:1}
+.small{font-size:13px; line-height:1.45; color:var(--muted)}
+.primary{height:58px; border:0; border-radius:16px; background:var(--accent); color:var(--on-accent); font-size:18px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; width:100%}
+.primary.done{background:var(--done); color:var(--on-done)}
+.primary:disabled{background:var(--line); color:var(--muted); font-size:16px; font-weight:700; cursor:not-allowed}
+.secondary{height:48px; border-radius:14px; border:1.5px solid var(--field); background:var(--surface); font-size:16px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px}
+.bar .small{text-align:center}
+.dates-head{display:flex; justify-content:space-between; align-items:center; gap:10px}
+.mode{display:flex; padding:3px; border-radius:12px; background:var(--line); gap:2px}
+.mode-btn{border:0; background:transparent; min-height:38px; padding:0 12px; border-radius:9px; font-size:14px; font-weight:700; color:var(--muted); cursor:pointer}
+.mode-btn[aria-pressed="true"]{background:var(--surface); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.cal{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px}
+.cal-col{display:flex; flex-direction:column; gap:8px; min-width:0}
+.cal .field{font-size:16px; padding:0 10px; -webkit-appearance:none; appearance:none; min-height:52px; display:flex; align-items:center}
+.cal .field::-webkit-date-and-time-value{text-align:left}
+#calInfo.err{color:var(--warn); font-weight:600}
+.visually-hidden{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+
+/* settings sheet */
+dialog{border:0; padding:0; width:min(520px,100%); max-width:100%; margin:auto auto 0; border-radius:22px 22px 0 0; background:var(--surface); color:var(--ink)}
+dialog::backdrop{background:rgba(10,20,16,.45)}
+.sheet{padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px)); display:flex; flex-direction:column; gap:12px}
+.sheet h2{margin:0 0 4px; font-size:22px; font-weight:800}
+.toast{position:fixed; left:50%; bottom:calc(110px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%) translateY(10px); opacity:0; background:var(--done); color:var(--on-done); padding:12px 18px; border-radius:12px; font-weight:700; font-size:15px; pointer-events:none; transition:opacity .2s, transform .2s; max-width:90vw; text-align:center}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion: reduce){.toast{transition:none}.prop:active{transform:none}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <section class="view" id="home" aria-label="Properties">
+    <div class="home-head">
+      <div class="home-top">
+        <div>
+          <div class="kicker">Co-host</div>
+          <h1>Send a guest message</h1>
+        </div>
+        <button class="icon-btn boxed" id="openSettings" aria-label="Settings">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"></path></svg>
+        </button>
+      </div>
+      <div class="chips"><span class="chip">Check-in 3 PM</span><span class="chip">Checkout 11 AM</span></div>
+      <label class="search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="color:var(--muted)"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+        <input id="q" type="search" placeholder="Find a property" aria-label="Find a property" autocomplete="off">
+      </label>
+    </div>
+    <div class="scroll">
+      <div class="list" id="list"></div>
+    </div>
+    <div class="bar">
+      <a class="outline-btn" id="ownerBtn" href="#">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"></path><path d="M10.3 3.9L2 18a2 2 0 001.7 3h16.6a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"></path></svg>
+        <span id="ownerLabel">Problem? Contact the owner</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="view" id="detail" aria-label="Message" hidden>
+    <div class="top">
+      <button class="icon-btn" id="back" aria-label="Back to properties">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
+      </button>
+      <div class="top-text"><span class="top-name" id="dName"></span><span class="top-meta" id="dMeta"></span></div>
+    </div>
+    <div class="scroll" id="dScroll">
+      <div class="body">
+        <div class="step">
+          <span class="step-title"><b>1</b>Which message?</span>
+          <div class="tabs" role="group" aria-label="Message type">
+            <button class="tab" data-tab="w"><span>Welcome</span><span>After booking</span></button>
+            <button class="tab" data-tab="i"><span>Check-in</span><span>Arrival day</span></button>
+            <button class="tab" data-tab="o"><span>Checkout</span><span>Morning of</span></button>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-title"><b>2</b>Guest details</span>
+          <label class="field-label" for="gName">Guest first name</label>
+          <input class="field" id="gName" type="text" placeholder="e.g. Maria" autocomplete="off" autocapitalize="words">
+          <div class="step" id="datesWrap">
+            <div class="dates-head">
+              <span class="field-label" id="datesLbl">Stay dates</span>
+              <div class="mode" role="group" aria-labelledby="datesLbl">
+                <button type="button" class="mode-btn" data-mode="cal" aria-pressed="true">Calendar</button>
+                <button type="button" class="mode-btn" data-mode="type" aria-pressed="false">Type it</button>
+              </div>
+            </div>
+            <div id="calWrap" class="cal">
+              <div class="cal-col">
+                <label class="field-label" for="dIn">Check-in</label>
+                <input class="field" id="dIn" type="date">
+              </div>
+              <div class="cal-col">
+                <label class="field-label" for="dOut">Checkout</label>
+                <input class="field" id="dOut" type="date">
+              </div>
+            </div>
+            <span class="small" id="calInfo" aria-live="polite"></span>
+            <div id="typeWrap" hidden>
+              <label class="visually-hidden" for="gDates">Stay dates, typed</label>
+              <input class="field" id="gDates" type="text" placeholder="e.g. Oct 10 – 13" autocomplete="off">
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="preview-head">
+            <span class="step-title"><b>3</b>Check it, then copy</span>
+            <button class="link-btn" id="editBtn">Edit message</button>
+          </div>
+          <div class="warn" id="warn" hidden>This message still has blanks from the playbook. Tap “Edit message” to fill them in.</div>
+          <div class="bubble" id="bubble"></div>
+          <div id="editWrap" class="step" hidden>
+            <label class="field-label" for="editor">Message template for this property. Keep [GUEST FIRST NAME] and [DATES] where the app should fill them in.</label>
+            <textarea class="editor" id="editor"></textarea>
+            <div class="row">
+              <button class="secondary" id="resetEdit">Reset to original</button>
+              <button class="secondary" id="saveEdit" style="border-color:var(--accent); color:var(--accent)">Save message</button>
+            </div>
+          </div>
+          <span class="small">Refunds, damage, safety or disputes: don’t promise anything. Contact the owner first.</span>
+        </div>
+      </div>
+    </div>
+    <div class="bar">
+      <div class="row">
+        <button class="primary" id="copyBtn"></button>
+        <button class="secondary" id="shareBtn" aria-label="Share message" style="flex:0 0 58px; height:58px; border-radius:16px" hidden>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v13M7 8l5-5 5 5"></path><path d="M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5"></path></svg>
+        </button>
+      </div>
+      <span class="small" id="hint">Copies the full message, ready to paste</span>
+    </div>
+  </section>
+</div>
+
+<dialog id="settings" aria-labelledby="setTitle">
+  <form method="dialog" class="sheet" id="setForm">
+    <h2 id="setTitle">Settings</h2>
+    <label class="field-label" for="ownerName">Owner name</label>
+    <input class="field" id="ownerName" type="text" placeholder="e.g. Anthony" autocomplete="off">
+    <label class="field-label" for="ownerPhone">Owner phone</label>
+    <input class="field" id="ownerPhone" type="tel" placeholder="e.g. 562 555 0123" autocomplete="off">
+    <p class="small" style="margin:0">Saved on this phone only. Message edits are saved on this phone too.</p>
+    <div class="row" style="margin-top:6px">
+      <button class="secondary" value="cancel" type="submit">Cancel</button>
+      <button class="primary" value="save" type="submit" style="height:48px; font-size:16px">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const BASE = [{"name": "Urban Oasis in Long Beach", "guests": 5, "w": "Hi [GUEST FIRST NAME], thank you for booking Urban Oasis in Long Beach! We are looking forward to hosting you. Your reservation is confirmed for [DATES]. We will send your check-in details before arrival. If you have any questions in the meantime, please message us here.", "i": "Hi [GUEST FIRST NAME] Check-in Instructions\n1. Enter the code 9023.\n2. The unit is located in the back by the garage.\n3. Once inside, go up the stairs.\n• The key will be on the doors or doors will be unlocked.\n5. Wi-Fi:\n• Network: Anthony17\n• Password: Sunset205!\n6. Parking: Please park on the street in front of the house.", "o": "Good morning [GUEST FIRST NAME], we hope you enjoyed your stay at Urban Oasis in Long Beach. Checkout is by 11 AM. Before leaving, please make sure you leave the keys and lock the doors. Throw out any trash in the outside bins and turn off the lights, TV, and air conditioners. Thank you for staying with us and safe travels!", "num": 1, "city": "Long Beach"}, {"name": "Adams Ave House", "guests": 3, "w": "Hi [GUEST FIRST NAME], thank you for booking Farmhouse Near Disneyland and Old Town! We are looking forward to hosting you. Your reservation is confirmed for [DATES]. We will send your check-in details before arrival. If you have any questions in the meantime, please message us here.", "i": "Hi [GUEST FIRST NAME],  Thank you for booking with us. When you arrive at the house please park on the street. There is a parking permit you can use inside the unit. When you arrive there is a white gate on the left side of the garage. Open the gate and the house will be all the way at the end. The house is in the back unit. The unit number is 1241, you will see an arrow point towards the white gate. The door code is 8490. The WiFi is Anthony7 password is 5626226450. Please do not open the black gate next to the unit.", "o": "Good morning [GUEST FIRST NAME], we hope you enjoyed your stay at Farmhouse Near Disneyland and Old Town. Checkout is by 11 AM. Before leaving, please make sure you leave the keys and lock the doors. Throw out any trash in the outside bins and turn off the lights, TV, and air conditioners. Thank you for staying with us and safe travels!", "num": 2, "city": "Orange"}, {"name": "Stylish Mid-Century Modern Room", "guests": 3, "w": "Hi [GUEST FIRST NAME], thank you for booking Stylish Mid-Century Modern Room! We are looking forward to hosting you. Your reservation is confirmed for [DATES]. We will send your check-in details before arrival. If you have any questions in the meantime, please message us here.", "i": "Hi [GUEST FIRST NAME], Check-in Instructions\n1. Enter the code 1112.\n2. The unit is located in the back by the garage.\n3. Once inside, go up the stairs. Your room will be to the left.\n• The key will be on the doors or doors will be unlocked.\n5. Wi-Fi:\n• Network: Anthony17\n• Password: Sunset205!\n6. Parking: Please park on the street or drive way.", "o": "Good morning [GUEST FIRST NAME], we hope you enjoyed your stay at Stylish Mid-Century Modern Room. Checkout is by 11 AM. Before leaving, please make sure you leave the keys and lock the doors. Throw out any trash in the outside bins and turn off the lights, TV, and air conditioners. Thank you for staying with us and safe travels!", "num": 3, "city": "Long Beach"}, {"name": "The Haven Hub", "guests": null, "w": "Hi [GUEST FIRST NAME], thank you for booking The Haven Hub! We are looking forward to hosting you. Your reservation is confirmed for [DATES]. We will send your check-in details before arrival. If you have any questions in the meantime, please message us here.", "i": "Hi [GUEST FIRST NAME], welcome to The Haven Hub!  The door code is 9097.\nWi-Fi\nNetwork: Anthony17\nPassword: Sunset205!\n\nPass the kitchen there is another sofa to the right of it is the room. There should be a number 3 on the door. If you have questions just let me know. The bathroom inside the room is yours. The other bathroom in living room is for the other guest.\n\nEnjoy your stay!\n\nAnthony", "o": "Good morning [GUEST FIRST NAME], we hope you enjoyed your stay at The Haven Hub. Checkout is by 11 AM. Before leaving, please make sure you leave the keys and lock the doors. Throw out any trash in the outside bins and turn off the lights, TV, and air conditioners. Thank you for staying with us and safe travels!", "num": 4, "city": "Long Beach"}, {"name": "Mid-Century Gem in Long Beach", "guests": 8, "w": "Hi [GUEST FIRST NAME], thank you for booking Mid-Century Gem in Long Beach! We are looking forward to hosting you. Your reservation is confirmed for [DATES]. We will send your check-in details before arrival. If you have any questions in the meantime, please message us here.", "i": "Hi [GUEST FIRST NAME], welcome to Mid-Century Gem in Long Beach! Door code: 9097\n\nWi-Fi\nNetwork: Anthony17\nPassword: Sunset205!\n\nThere is parking available directly in front of the house, and you’re also welcome to park in the driveway.\n\nIf you have any questions during your stay, feel free to reach out.\n\nEnjoy your stay!\n— Anthony", "o": "Good morning [GUEST FIRST NAME], we hope you enjoyed your stay at Mid-Century Gem in Long Beach. Checkout is by 11 AM. Before leaving, please make sure you leave the keys and lock the doors. Throw out any trash in the outside bins and turn off the lights, TV, and air conditioners. Thank you for staying with us and safe travels!", "num": 5, "city": "Long Beach"}, {"name": "Spacious Retreat with cozy room", "guests": null, "w": "Hi [GUEST FIRST NAME], thank you for booking Spacious Retreat with cozy room! We are looking forward to hosting you. Your reservation is confirmed for [DATES]. We will send your check-in details before arrival. If you have any questions in the meantime, please message us here.", "i": "Hi [GUEST FIRST NAME], welcome to Spacious Retreat with cozy room! Check-in is at 3 PM.\n\n[ENTER PROPERTY-SPECIFIC CHECK-IN INSTRUCTIONS]\n\nWi-Fi: [ENTER NETWORK / PASSWORD]\nParking: [ENTER PARKING INSTRUCTIONS]\n\nIf you have any questions, please message us here.", "o": "Good morning [GUEST FIRST NAME], we hope you enjoyed your stay at Spacious Retreat with cozy room. Checkout is by 11 AM. Before leaving, please make sure you leave the keys and lock the doors. Throw out any trash in the outside bins and turn off the lights, TV, and air conditioners. Thank you for staying with us and safe travels!", "num": 6, "city": "Downey"}, {"name": "Stylish getaway: Mid-Century LB 1", "guests": 2, "w": "Hi [GUEST FIRST NAME], thank you for booking Stylish getaway: Mid-Century LB 1! We are looking forward to hosting you. Your reservation is confirmed for [DATES]. We will send your check-in details before arrival. If you have any questions in the meantime, please message us here.", "i": "Hi [GUEST FIRST NAME], welcome to Stylish getaway: Mid-Century LB 1! The room is ready. The door code is 9097.\n\nWi-Fi\nNetwork: Anthony17\nPassword: Sunset205!\n\nLet me know if you have any questions. There is a spot in front of the house for parking.\n\nWhen you enter the house make a right before the kitchen entrance then make another right. The room should have a number one on the door. You have access to the bathroom, living room and kitchen.\nIf you have any questions feel free to message me.", "o": "Good morning [GUEST FIRST NAME], we hope you enjoyed your stay at Stylish getaway: Mid-Century LB 1. Checkout is by 11 AM. Before leaving, please make sure you leave the keys and lock the doors. Throw out any trash in the outside bins and turn off the lights, TV, and air conditioners. Thank you for staying with us and safe travels!", "num": 7, "city": "Long Beach"}, {"name": "Sunny Stay in Downey", "guests": 3, "w": "Hi [GUEST FIRST NAME], thank you for booking Sunny Stay in Downey! We are looking forward to hosting you. Your reservation is confirmed for [DATES]. We will send your check-in details before arrival. If you have any questions in the meantime, please message us here.", "i": "Hi [GUEST FIRST NAME], welcome to Sunny Stay in Downey! Here are your check-in details:\n• Door code: 1290\n• Parking: Please park all the way in the driveway, next to the garage, so you don’t block other cars.\n• Room location: Enter through the front door facing the street. Once inside, walk straight down the hallway—your room is the last door on the right.\n• Bathroom: The bathroom is inside your room. Please do not use the hallway bathroom, as that is for the other room.\n\nThe WiFi network is Anthony20, and the password is freshriver205\n\nKeys:\nYou’ll find two keys under the towels in your room:\n• One key is for your room\n• The other is for the laundry room\n\nLet me know if you have any questions—happy to help!", "o": "Good morning [GUEST FIRST NAME], we hope you enjoyed your stay at Sunny Stay in Downey. Checkout is by 11 AM. Before leaving, please make sure you leave the keys and lock the doors. Throw out any trash in the outside bins and turn off the lights, TV, and air conditioners. Thank you for staying with us and safe travels!", "num": 8, "city": "Downey"}, {"name": "Urban Elegance: Stylish LB Stay 2", "guests": 2, "w": "Hi [GUEST FIRST NAME], thank you for booking Urban Elegance: Stylish LB Stay 2! We are looking forward to hosting you. Your reservation is confirmed for [DATES]. We will send your check-in details before arrival. If you have any questions in the meantime, please message us here.", "i": "Hi [GUEST FIRST NAME], welcome to Urban Elegance: Stylish LB Stay 2! The door code is 9097.\n\nWi-Fi\nNetwork: Anthony17\nPassword: Sunset205!\n\nThe room key is inside the room. The room should have a 2 on the door.\n\nLet me know if you have any questions. There is a spot in front of the house for parking.\n\nWhen you enter the house make a right before the kitchen entrance. The room should have a number two on the door. You have access to the bathroom, living room and kitchen.\nIf you have any questions feel free to message me.", "o": "Good morning [GUEST FIRST NAME], we hope you enjoyed your stay at Urban Elegance: Stylish LB Stay 2. Checkout is by 11 AM. Before leaving, please make sure you leave the keys and lock the doors. Throw out any trash in the outside bins and turn off the lights, TV, and air conditioners. Thank you for staying with us and safe travels!", "num": 9, "city": "Long Beach"}, {"name": "ADU-Half Right Room", "guests": 3, "w": "Hi [GUEST FIRST NAME], thank you for booking Modern Stay Near LGB Airport! We are looking forward to hosting you. Your reservation is confirmed for [DATES]. We will send your check-in details before arrival. If you have any questions in the meantime, please message us here.", "i": "Hi [GUEST FIRST NAME], welcome to Modern Stay Near LGB Airport! Check-in Instructions\n1. Enter the code 1112.\n2. The unit is located in the back by the garage.\n3. Once inside, go up the stairs. Your room will be to the Right.\n• The key will be on the doors or doors will be unlocked.\n5. Wi-Fi:\n• Network: Anthony17\n• Password: Sunset205!\n6. Parking: Please park on the street or drive way.", "o": "Good morning [GUEST FIRST NAME], we hope you enjoyed your stay at ADU-Half Right Room. Checkout is by 11 AM. Before leaving, please make sure you leave the keys and lock the doors. Throw out any trash in the outside bins and turn off the lights, TV, and air conditioners. Thank you for staying with us and safe travels!", "num": 10, "city": "Long Beach"}];
+const $ = (id) => document.getElementById(id);
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+let edits = store.get('cohost.edits', {});
+let owner = store.get('cohost.owner', { name:'', phone:'' });
+const st = { sel:0, tab:'w', name:'', dates:'', din:'', dout:'', mode:'cal', copied:false, editing:false };
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const toDate = (s) => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+const iso = (dt) => dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0');
+function nights(){ return (st.din && st.dout) ? Math.round((toDate(st.dout) - toDate(st.din)) / 86400000) : 0; }
+function calText(){
+  if (!st.din || !st.dout || nights() < 1) return '';
+  const a = toDate(st.din), b = toDate(st.dout);
+  if (a.getFullYear() !== b.getFullYear()) return MON[a.getMonth()] + ' ' + a.getDate() + ', ' + a.getFullYear() + ' – ' + MON[b.getMonth()] + ' ' + b.getDate() + ', ' + b.getFullYear();
+  if (a.getMonth() === b.getMonth()) return MON[a.getMonth()] + ' ' + a.getDate() + ' – ' + b.getDate();
+  return MON[a.getMonth()] + ' ' + a.getDate() + ' – ' + MON[b.getMonth()] + ' ' + b.getDate();
+}
+const datesText = () => st.mode === 'cal' ? calText() : st.dates.trim();
+
+const msg = (p, t) => (edits[p.num] && edits[p.num][t] != null) ? edits[p.num][t] : p[t];
+const meta = (p) => p.city + (p.guests ? ', up to ' + p.guests + ' guests' : '');
+const needsInfo = (p) => !p.guests || ['w','i','o'].some(t => msg(p,t).indexOf('[ENTER') >= 0);
+const esc = (s) => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function renderList(){
+  const q = $('q').value.trim().toLowerCase();
+  const items = BASE.filter(p => !q || p.name.toLowerCase().includes(q) || String(p.num) === q);
+  const list = $('list');
+  if (!items.length){ list.innerHTML = '<div class="empty">No property matches “' + esc(q) + '”. Try part of the name or its number.</div>'; return; }
+  list.innerHTML = '<span class="list-label">Pick a property (' + BASE.length + ')</span>' + items.map(p =>
+    '<button class="prop" data-i="' + BASE.indexOf(p) + '"><span class="num">' + p.num + '</span><span class="prop-text"><span class="prop-name">' + esc(p.name) + '</span><span class="prop-meta">' + meta(p) + '</span>' + (needsInfo(p) ? '<span class="tag">Needs info</span>' : '') + '</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--muted)"><path d="M9 6l6 6-6 6"></path></svg></button>'
+  ).join('');
+}
+
+function filled(){
+  const p = BASE[st.sel];
+  return msg(p, st.tab).split('[GUEST FIRST NAME]').join(st.name.trim() || '[GUEST FIRST NAME]').split('[DATES]').join(datesText() || '[DATES]');
+}
+
+function renderDetail(){
+  const p = BASE[st.sel];
+  $('dName').textContent = p.name;
+  $('dMeta').textContent = meta(p) + ', #' + p.num;
+  document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === st.tab)));
+  $('datesWrap').hidden = st.tab !== 'w';
+  document.querySelectorAll('.mode-btn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === st.mode)));
+  $('calWrap').hidden = st.mode !== 'cal';
+  $('typeWrap').hidden = st.mode !== 'type';
+  const info = $('calInfo'), n = nights();
+  info.hidden = st.mode !== 'cal';
+  info.classList.toggle('err', !!(st.din && st.dout && n < 1));
+  info.textContent = !st.din ? 'Pick the check-in day' : !st.dout ? 'Now pick the checkout day' : n < 1 ? 'Checkout has to be after check-in' : n + (n === 1 ? ' night' : ' nights') + ': shows as “' + calText() + '”';
+  const raw = msg(p, st.tab);
+  $('warn').hidden = raw.indexOf('[ENTER') < 0;
+  $('bubble').innerHTML = esc(filled()).replace(/\[[^\]\n]+\]/g, m => '<mark>' + m + '</mark>');
+  $('bubble').hidden = st.editing;
+  $('editWrap').hidden = !st.editing;
+  $('editBtn').textContent = st.editing ? 'Done' : 'Edit message';
+  const needName = !st.name.trim(), needDates = st.tab === 'w' && !datesText();
+  const btn = $('copyBtn');
+  btn.classList.toggle('done', st.copied);
+  if (needName || needDates || st.editing){
+    btn.disabled = true;
+    btn.textContent = st.editing ? 'Save your edit first' : needName ? 'Add the guest’s name to copy' : 'Add the stay dates to copy';
+  } else {
+    btn.disabled = false;
+    btn.innerHTML = st.copied
+      ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>Copied'
+      : '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V6a2 2 0 012-2h9"></path></svg>Copy message';
+  }
+  $('shareBtn').disabled = btn.disabled;
+  $('hint').textContent = st.copied ? 'Now paste it in Airbnb, VRBO or Hospitable' : 'Copies the full message, ready to paste';
+}
+
+function show(view){
+  $('home').hidden = view !== 'home';
+  $('detail').hidden = view !== 'detail';
+  if (view === 'home') renderList();
+}
+
+function openProp(i){
+  Object.assign(st, { sel:i, tab:'w', name:'', dates:'', din:'', dout:'', copied:false, editing:false });
+  $('gName').value = ''; $('gDates').value = ''; $('dIn').value = ''; $('dOut').value = ''; $('dOut').min = '';
+  renderDetail(); show('detail'); $('dScroll').scrollTop = 0;
+  history.pushState({ v:'detail' }, '');
+}
+
+function toast(t){
+  const el = $('toast'); el.textContent = t; el.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+async function copyText(text){
+  try { await navigator.clipboard.writeText(text); return true; } catch(e){}
+  try {
+    const ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly','');
+    ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta);
+    ta.select(); ta.setSelectionRange(0, text.length);
+    const ok = document.execCommand('copy'); ta.remove(); return ok;
+  } catch(e){ return false; }
+}
+
+function renderOwner(){
+  const a = $('ownerBtn');
+  if (owner.phone){ a.href = 'tel:' + owner.phone.replace(/[^0-9+]/g,''); $('ownerLabel').textContent = 'Problem? Call ' + (owner.name || 'the owner'); }
+  else { a.href = '#'; $('ownerLabel').textContent = 'Problem? Contact the owner'; }
+}
+
+/* events */
+$('q').addEventListener('input', renderList);
+$('list').addEventListener('click', e => { const b = e.target.closest('.prop'); if (b) openProp(Number(b.dataset.i)); });
+$('back').addEventListener('click', () => { if (history.state && history.state.v === 'detail') history.back(); else show('home'); });
+window.addEventListener('popstate', () => show('home'));
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { st.tab = b.dataset.tab; st.copied = false; st.editing = false; renderDetail(); }));
+$('gName').addEventListener('input', e => { st.name = e.target.value; st.copied = false; renderDetail(); });
+$('gDates').addEventListener('input', e => { st.dates = e.target.value; st.copied = false; renderDetail(); });
+$('dIn').addEventListener('change', e => {
+  st.din = e.target.value; st.copied = false;
+  if (st.din){
+    const next = toDate(st.din); next.setDate(next.getDate() + 1);
+    $('dOut').min = iso(next);
+    if (!st.dout || nights() < 1){ st.dout = iso(next); $('dOut').value = st.dout; }
+  }
+  renderDetail();
+});
+$('dOut').addEventListener('change', e => { st.dout = e.target.value; st.copied = false; renderDetail(); });
+document.querySelectorAll('.mode-btn').forEach(b => b.addEventListener('click', () => {
+  st.mode = b.dataset.mode; st.copied = false;
+  if (st.mode === 'type' && !st.dates.trim() && calText()){ st.dates = calText(); $('gDates').value = st.dates; }
+  renderDetail();
+  (st.mode === 'type' ? $('gDates') : $('dIn')).focus();
+}));
+$('copyBtn').addEventListener('click', async () => {
+  const ok = await copyText(filled());
+  if (ok){ st.copied = true; renderDetail(); toast('Copied. Paste it in your guest chat.'); }
+  else toast('Couldn’t copy. Press and hold the message to copy it.');
+});
+if (navigator.share){
+  $('shareBtn').hidden = false;
+  $('shareBtn').addEventListener('click', async () => { try { await navigator.share({ text: filled() }); } catch(e){} });
+}
+$('editBtn').addEventListener('click', () => {
+  if (st.editing){ st.editing = false; renderDetail(); return; }
+  st.editing = true; $('editor').value = msg(BASE[st.sel], st.tab); renderDetail(); $('editor').focus();
+});
+$('saveEdit').addEventListener('click', () => {
+  const p = BASE[st.sel];
+  edits[p.num] = edits[p.num] || {}; edits[p.num][st.tab] = $('editor').value;
+  store.set('cohost.edits', edits); st.editing = false; st.copied = false; renderDetail(); toast('Message saved');
+});
+$('resetEdit').addEventListener('click', () => {
+  const p = BASE[st.sel];
+  if (edits[p.num]){ delete edits[p.num][st.tab]; store.set('cohost.edits', edits); }
+  $('editor').value = p[st.tab]; st.copied = false; renderDetail(); toast('Back to the original message');
+});
+$('openSettings').addEventListener('click', () => { $('ownerName').value = owner.name; $('ownerPhone').value = owner.phone; $('settings').showModal(); });
+$('ownerBtn').addEventListener('click', e => { if (!owner.phone){ e.preventDefault(); $('openSettings').click(); } });
+$('settings').addEventListener('close', () => {
+  if ($('settings').returnValue === 'save'){
+    owner = { name: $('ownerName').value.trim(), phone: $('ownerPhone').value.trim() };
+    store.set('cohost.owner', owner); renderOwner(); toast('Settings saved');
+  }
+});
+
+renderOwner(); renderList();
+</script>
+</body>
+</html>
